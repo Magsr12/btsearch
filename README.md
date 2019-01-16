@@ -1,6 +1,5 @@
 # btsearch - ThePirateBay Simple API
 
-Pesquisa de torrents no ThePirateBay
 Search torrents in ThePirateBay
 
 # LICENSE
