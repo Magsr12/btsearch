@@ -184,6 +184,4 @@ def main():
         print "\n[*] Magnet link para {}\n".format(title_results_[choice])
         print magnet_results_[choice]
 
-                                #print t['name'] + '   ' +str(t['magnet_url'])
-
 main()	
