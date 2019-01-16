@@ -173,13 +173,13 @@ def main():
                                 return round(size/float(lim/2**10),2).__str__()+suf
 		
         t = ThePirateBay()
-        print "[*] Resultados de https://thepiratebay.org para a query: {}".format(search_query)
+        print "[*] Resultados de https://thepiratebay.org para a query: {}\n".format(search_query)
         for t in t.search(str(search_query)):
                 x += 1
                 print '[{}] '.format(x) + t['name']
                 magnet_results_.append(str(t['magnet_url']))
                 title_results_.append(str(t['name']))
-        asp = raw_input('[*] Insira um numero da lista: ')
+        asp = raw_input('\n[*] Insira um numero da lista: ')
         choice = int(asp) - 1
         print "\n[*] Magnet link para {}\n".format(title_results_[choice])
         print magnet_results_[choice]
