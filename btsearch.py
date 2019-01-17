@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 import datetime
 from urllib import *
 from urlparse import *
@@ -160,20 +158,21 @@ def main():
                         else:
                                 return round(size/float(lim/2**10),2).__str__()+suf		
         t = ThePirateBay()
-        print "[*] Resultados de https://thepiratebay.org para a query: {}\n".format(search_query)
+        print "[*] Resultados de https://thepiratebay.org para a query: {}\n".format(search_query)    
         for t in t.search(str(search_query)):
                 x += 1
-                print '[{}] '.format(x) + str(prettySize(t['size_of'])) + "  " + t['name']
+                print '[{}] '.format(x) + str(prettySize(t['size_of'])) + "  " + t['name'].encode('utf-8') #
                 magnet_results_.append(str(t['magnet_url']))
-                title_results_.append(str(t['name']))
+                title_results_.append(str(t['name'].encode('utf-8'))) # Adicionado .encode para previnir erros de codificacao
         asp = raw_input('\n[*] Insira um numero da lista: ')
         choice = int(asp) - 1
-        print "\n[*] Magnet link para {}\n".format(title_results_[choice])
+        print "\n[*] Magnet link para: {}\n".format(title_results_[choice])
         print magnet_results_[choice]
         asp2 = raw_input('\n[*] Deseja abrir Bittorrent ? [S/n]: ')
         if asp2 == 'n':
                 exit()
         else:
+                print "[*] Abrindo..."
                 cmd = os.system('start bittorrent "{}"'.format(magnet_results_[choice]))
                 
 main()
