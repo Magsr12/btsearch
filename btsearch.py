@@ -19,7 +19,8 @@ import datetime
 from urllib import quote_plus
 from urlparse import urljoin
 import urllib2
-import argparse
+import sys
+import os
 
 hdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -28,10 +29,10 @@ hdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML,
        'Accept-Language': 'en-US,en;q=0.8',
        'Connection': 'keep-alive'}
 
-magnet_results_ = []
-title_results_ = []
-
-import lxml.html
+try:
+	import lxml.html
+except ImportError:
+	os.system('pip install lxml')
 
 class SearchResultParser:
 	def __init__(self, html):
@@ -154,7 +155,8 @@ class ThePirateBay:
 
 
 def main():
-        import sys
+	magnet_results_ = []
+	title_results_ = []
         x = 0
         try:
                 search_query = sys.argv[1]
