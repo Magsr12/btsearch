@@ -1,38 +1,24 @@
 # encoding: utf-8
 
-#       This program is free software; you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation; either version 2 of the License, or
-#       (at your option) any later version.
-#       
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#       
-#       You should have received a copy of the GNU General Public License
-#       along with this program; if not, write to the Free Software
-#       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-#       MA 02110-1301, USA.
-
 import datetime
-from urllib import quote_plus
-from urlparse import urljoin
+from urllib import *
+from urlparse import *
 import urllib2
 import sys
 import os
 
-hdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
-       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-       'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
-       'Accept-Encoding': 'none',
-       'Accept-Language': 'en-US,en;q=0.8',
-       'Connection': 'keep-alive'}
-
 try:
-	import lxml.html
+        import lxml.html
 except ImportError:
-	os.system('pip install lxml')
+        print "[*] Instalando lxml..."
+        os.system('pip install lxml')
+
+hdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+        'Accept-Encoding': 'none',
+        'Accept-Language': 'en-US,en;q=0.8',
+        'Connection': 'keep-alive'}
 
 class SearchResultParser:
 	def __init__(self, html):
@@ -155,8 +141,8 @@ class ThePirateBay:
 
 
 def main():
-	magnet_results_ = []
-	title_results_ = []
+        magnet_results_ = []
+        title_results_ = []
         x = 0
         try:
                 search_query = sys.argv[1]
@@ -172,18 +158,22 @@ def main():
                         if size > lim:
                                 continue
                         else:
-                                return round(size/float(lim/2**10),2).__str__()+suf
-		
+                                return round(size/float(lim/2**10),2).__str__()+suf		
         t = ThePirateBay()
         print "[*] Resultados de https://thepiratebay.org para a query: {}\n".format(search_query)
         for t in t.search(str(search_query)):
                 x += 1
-                print '[{}] '.format(x) + t['name']
+                print '[{}] '.format(x) + str(prettySize(t['size_of'])) + "  " + t['name']
                 magnet_results_.append(str(t['magnet_url']))
                 title_results_.append(str(t['name']))
         asp = raw_input('\n[*] Insira um numero da lista: ')
         choice = int(asp) - 1
         print "\n[*] Magnet link para {}\n".format(title_results_[choice])
         print magnet_results_[choice]
-
-main()	
+        asp2 = raw_input('\n[*] Deseja abrir Bittorrent ? [S/n]: ')
+        if asp2 == 'n':
+                exit()
+        else:
+                cmd = os.system('start bittorrent "{}"'.format(magnet_results_[choice]))
+                
+main()
