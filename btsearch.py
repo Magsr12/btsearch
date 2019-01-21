@@ -1,4 +1,19 @@
-#coding: utf-8
+# encoding: utf-8
+
+#       This program is free software; you can redistribute it and/or modify
+#       it under the terms of the GNU General Public License as published by
+#       the Free Software Foundation; either version 2 of the License, or
+#       (at your option) any later version.
+#       
+#       This program is distributed in the hope that it will be useful,
+#       but WITHOUT ANY WARRANTY; without even the implied warranty of
+#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#       GNU General Public License for more details.
+#       
+#       You should have received a copy of the GNU General Public License
+#       along with this program; if not, write to the Free Software
+#       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+#       MA 02110-1301, USA.
 
 import datetime
 from urllib import *
@@ -165,9 +180,9 @@ def main():
         print "[*] Resultados de http://thepiratebay.org para a query: {}\n".format(search_query)
         for t in t.search(str(search_query)):
                 x += 1
-                print '[{}] '.format(x) + str(prettySize(t['size_of'])) + "  " + t['name']
+                print '[{}] '.format(x) + str(prettySize(t['size_of'])) + "  " + t['name'].encode('utf-8')
                 magnet_results_.append(str(t['magnet_url']))
-                title_results_.append(str(t['name']))
+                title_results_.append(str(t['name'].encode('utf-8')))
         asp = raw_input('\n[*] Insira um numero da lista: ')
         choice = int(asp) - 1
         print "\n[*] Magnet link para {}\n".format(title_results_[choice])
