@@ -189,7 +189,20 @@ def main(repeat=False):
 | spam |  41.9999 |
 +------+----------+
 | eggs | 451      |
-+------+----------+"""
++------+----------+
+
+from prettytable import PrettyTable
+>>> t = PrettyTable(['Name', 'Age'])
+>>> t.add_row(['Alice', 24])
+>>> t.add_row(['Bob', 19])
+>>> print t
++-------+-----+
+|  Name | Age |
++-------+-----+
+| Alice |  24 |
+|  Bob  |  19 |
++-------+-----+
+"""
 	
                 
         try: # Check if the output is empty
