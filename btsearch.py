@@ -1,20 +1,5 @@
 # encoding: utf-8
 
-#       This program is free software; you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation; either version 2 of the License, or
-#       (at your option) any later version.
-#       
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#       
-#       You should have received a copy of the GNU General Public License
-#       along with this program; if not, write to the Free Software
-#       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-#       MA 02110-1301, USA.
-
 import datetime
 from urllib import *
 from urlparse import *
@@ -22,6 +7,9 @@ import urllib2
 import sys
 import os
 import ssl
+import time
+
+timing = 0 # String to repeat requests if search output is empty
 
 try:
         import lxml.html
@@ -85,6 +73,7 @@ class SearchResultParser:
 				data["uploaded_at"], data["size_of"] = self.process_datetime_string(ele.text_content())
 		data['seeders'] = int(columns[1].text_content().strip())
 		data['leechers'] = int(columns[2].text_content().strip())
+		
 		return data
 
 	def process_datetime_string(self, string):
@@ -157,9 +146,11 @@ class ThePirateBay:
 		return parser.parse()
 
 
-def main():
+def main(repeat=False):
+        global timing
         magnet_results_ = []
         title_results_ = []
+        seeders_results_ = []
         x = 0
         try:
                 search_query = sys.argv[1]
@@ -177,15 +168,36 @@ def main():
                         else:
                                 return round(size/float(lim/2**10),2).__str__()+suf		
         t = ThePirateBay()
-        print "[*] Resultados de http://thepiratebay.org para a query: {}\n".format(search_query)
+        if repeat:
+                print "[*] Procurando em http://thepiratebay.org por: {}".format(search_query)
+        else:
+                print "[*] Procurando em http://thepiratebay.org por: {}".format(search_query)
+                print "[*] Ordem por seeds: DESC | Order by seeds: DESC\n"
+                print "[N] [TAMANHO] [TITULO]\n"
+                
         for t in t.search(str(search_query)):
                 x += 1
-                print '[{}] '.format(x) + str(prettySize(t['size_of'])) + "  " + t['name'].encode('utf-8')
+                output =  '[{}] '.format(x) + "(" + str(prettySize(t['size_of'])) + ")" + "__________" + t['name'].encode('utf-8')
                 magnet_results_.append(str(t['magnet_url']))
                 title_results_.append(str(t['name'].encode('utf-8')))
+                seeders_results_.append(str(t['seeders']))
+                print output
+                
+        try: # Check if the output is empty
+                tmp = len(output)
+        except UnboundLocalError:
+                timing += 1
+                print '[*] Nenhum resultado encontrado, tentando novamente...'
+                time.sleep(2)
+                if timing == 4:
+                        exit('[*] Nao foram encontrados resultados para {} em https://thepiratebay.org'.format(search_query))
+                else:
+                        main(repeat=True)
+                
+                
         asp = raw_input('\n[*] Insira um numero da lista: ')
         choice = int(asp) - 1
-        print "\n[*] Magnet link para {}\n".format(title_results_[choice])
+        print "\n[*] Magnet link para {}.\n".format(title_results_[choice])
         print magnet_results_[choice]
         asp2 = raw_input('\n[*] Deseja abrir Bittorrent ? [S/n]: ')
         if asp2 == 'n':
