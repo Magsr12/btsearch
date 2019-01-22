@@ -1,13 +1,9 @@
 # encoding: utf-8
 
-import datetime
+import urllib2, sys, os, ssl, time, datetime
 from urllib import *
 from urlparse import *
-import urllib2
-import sys
-import os
-import ssl
-import time
+from prettytable import PrettyTable
 
 timing = 0 # String to repeat requests if search output is empty
 
@@ -168,53 +164,43 @@ def main(repeat=False):
                         else:
                                 return round(size/float(lim/2**10),2).__str__()+suf		
         t = ThePirateBay()
+        
+        #Repeat function if has not found results in "for" loop
         if repeat:
                 print "[*] Procurando em http://thepiratebay.org por: {}".format(search_query)
         else:
-                print "[*] Procurando em http://thepiratebay.org por: {}".format(search_query)
-                print "[*] Ordem por seeds: DESC | Order by seeds: DESC\n"
-                print "[N] [TAMANHO] [TITULO]\n"
+                print "[*] Procurando em http://thepiratebay.org por: {}".format(search_query) 
+                '''
+                Align text to the left
+                l = left
+                r = right
+                '''
+                table = PrettyTable(['N', 'Nome', 'Tam',  'Seeders'])# Datatable main string
+                table.align['N'] = 'l'
+                table.align['Nome'] = "l"
+                table.align['Seeders'] = 'l'
+                table.align['Tam'] = 'l'
+                
                 
         for t in t.search(str(search_query)):
                 x += 1
-                output =  '[{}] '.format(x) + "(" + str(prettySize(t['size_of'])) + ")" + "__________" + t['name'].encode('utf-8')
+                #output =  '[{}] '.format(x) + "(" + str(prettySize(t['size_of'])) + ")" + "__________" + t['name'].encode('utf-8') IF YOU WANT TO EDIT THE OUTPUT
                 magnet_results_.append(str(t['magnet_url']))
                 title_results_.append(str(t['name'].encode('utf-8')))
                 seeders_results_.append(str(t['seeders']))
-                print output
-	"""
-		print(tabulate([["spam", 41.9999], ["eggs", "451.0"]], 
-  tablefmt="grid"))
-+------+----------+
-| spam |  41.9999 |
-+------+----------+
-| eggs | 451      |
-+------+----------+
-
-from prettytable import PrettyTable
- t = PrettyTable(['Name', 'Age'])
- t.add_row(['Alice', 24])
- t.add_row(['Bob', 19])
- print t
-+-------+-----+
-|  Name | Age |
-+-------+-----+
-| Alice |  24 |
-|  Bob  |  19 |
-+-------+-----+
-"""
-	
+                table.add_row([x, t['name'].encode('utf-8'), str(prettySize(t['size_of'])), t['seeders']]) # Add the retrieved values to the table row
                 
-        try: # Check if the output is empty
-                tmp = len(output)
-        except UnboundLocalError:
+        if len(title_results_) == 0:
                 timing += 1
                 print '[*] Nenhum resultado encontrado, tentando novamente...'
                 time.sleep(2)
                 if timing == 4:
                         exit('[*] Nao foram encontrados resultados para {} em https://thepiratebay.org'.format(search_query))
                 else:
-                        main(repeat=True)
+                        main(repeat=True)                
+        else:
+                print table.get_string(title='Ordem por seeds: DESC | Order by seeds: DESC') # 'print table' + get_string to show title of table
+                
                 
                 
         asp = raw_input('\n[*] Insira um numero da lista: ')
