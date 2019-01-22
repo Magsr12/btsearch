@@ -182,6 +182,15 @@ def main(repeat=False):
                 title_results_.append(str(t['name'].encode('utf-8')))
                 seeders_results_.append(str(t['seeders']))
                 print output
+	"""
+		print(tabulate([["spam", 41.9999], ["eggs", "451.0"]], 
+  tablefmt="grid"))
++------+----------+
+| spam |  41.9999 |
++------+----------+
+| eggs | 451      |
++------+----------+"""
+	
                 
         try: # Check if the output is empty
                 tmp = len(output)
