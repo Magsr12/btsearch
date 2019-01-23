@@ -199,7 +199,7 @@ def main(repeat=False):
                 else:
                         main(repeat=True)                
         else:
-                print table.get_string(title='Ordem por seeds: DESC | Order by seeds: DESC') # 'print table' + get_string to show title of table
+                print table.get_string(title='Ordem por seeds: DESC | Order by seeds: DESC').encode('utf-8') # 'print table' + get_string to show title of table
                 
                 
                 
