@@ -1,4 +1,4 @@
-# encoding: utf-8
+#coding: utf-8
 
 import urllib2, sys, os, ssl, time, datetime
 from urllib import *
@@ -150,6 +150,9 @@ def main(repeat=False):
         x = 0
         try:
                 search_query = sys.argv[1]
+                if "'" in search_query:
+                        exit('[*] ALERTA: voce deve utilizar ASPAS DUPLAS durante a pesquisa, ex: python btsearch.py "Avatar"')
+                        
         except IndexError:
                 exit('\n[*] Uso: python btsearch.py "<SEARCH>"')
                 
@@ -162,26 +165,16 @@ def main(repeat=False):
                         if size > lim:
                                 continue
                         else:
-                                return round(size/float(lim/2**10),2).__str__()+suf		
-        t = ThePirateBay()
+                                return round(size/float(lim/2**10),2).__str__()+suf
+        t = ThePirateBay()        
+        print "[*] Procurando em http://thepiratebay.org por: {}".format(search_query)
+        table = PrettyTable(['N', 'Nome', 'Tam',  'Seeders'])  #Datatable main string
+        table.title = 'Ordem por seeders: DESC | Order by sedeers: DESC'
+        table.align['N'] = 'l'
+        table.align['Nome'] = "l"
+        table.align['Seeders'] = 'l'
+        table.align['Tam'] = 'l'
         
-        #Repeat function if has not found results in "for" loop
-        if repeat:
-                print "[*] Procurando em http://thepiratebay.org por: {}".format(search_query)
-        else:
-                print "[*] Procurando em http://thepiratebay.org por: {}".format(search_query) 
-                '''
-                Align text to the left
-                l = left
-                r = right
-                '''
-                table = PrettyTable(['N', 'Nome', 'Tam',  'Seeders'])# Datatable main string
-                table.align['N'] = 'l'
-                table.align['Nome'] = "l"
-                table.align['Seeders'] = 'l'
-                table.align['Tam'] = 'l'
-                
-                
         for t in t.search(str(search_query)):
                 x += 1
                 #output =  '[{}] '.format(x) + "(" + str(prettySize(t['size_of'])) + ")" + "__________" + t['name'].encode('utf-8') IF YOU WANT TO EDIT THE OUTPUT
@@ -199,8 +192,7 @@ def main(repeat=False):
                 else:
                         main(repeat=True)                
         else:
-                print table.get_string(title='Ordem por seeds: DESC | Order by seeds: DESC').encode('utf-8') # 'print table' + get_string to show title of table
-                
+                print table
                 
                 
         asp = raw_input('\n[*] Insira um numero da lista: ')
