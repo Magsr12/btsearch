@@ -5,13 +5,13 @@ from urllib import *
 from urlparse import *
 from prettytable import PrettyTable
 
-timing = 0 # String to repeat requests if search output is empty
-
 try:
         import lxml.html
 except ImportError:
-        print "[*] Instalando lxml..."
+        print '[*] Pacote nao instalado: lxml'
         os.system('pip install lxml')
+
+timing = 0 # String to repeat requests if search output is empty
 
 hdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -137,12 +137,26 @@ class ThePirateBay:
 		# Added string gcontext ( SSL CERTIFICATE ERROR )
 		gcontext = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
 		req = urllib2.Request(url, headers=hdr)
-		html = urllib2.urlopen(req, context=gcontext) #context added
+		try:
+                	html = urllib2.urlopen(req, context=gcontext) #context added
+                except urllib2.HTTPError:
+                        main(repeat=True)
 		parser = SearchResultParser(html)
 		return parser.parse()
 
 
+def copy_to_path(): #Func to copy the script to home dir
+        script_dir = os.getcwd() + '/' + sys.argv[0]
+        home_dir = os.path.expanduser('~/')        
+        if os.path.isfile(home_dir + 'btsearch.py'):
+                pass
+        else:
+                import shutil
+                shutil.copy(script_dir, home_dir)
+                print '[*] Criado link em {}'.format(home_dir + sys.argv[0])
+        
 def main(repeat=False):
+        copy_to_path()
         global timing
         magnet_results_ = []
         title_results_ = []
@@ -151,13 +165,16 @@ def main(repeat=False):
         try:
                 search_query = sys.argv[1]
                 if "'" in search_query:
-                        exit('[*] ALERTA: voce deve utilizar ASPAS DUPLAS durante a pesquisa, ex: python btsearch.py "Avatar"')
+                        exit('[*] ALERTA: voce deve utilizar ASPAS DUPLAS durante a pesquisa, ex: python btsearch.py "Avatar".')
+		else:
+			if repeat == False:
+				print('[*] Para conseguir todos resultados possiveis, e necessario utilizar ASPAS DUPLAS durante a pesquisa')
                         
         except IndexError:
-                exit('\n[*] Uso: python btsearch.py "<SEARCH>"')
+                exit('[*] Uso: python btsearch.py "<SEARCH>"')
                 
         if search_query == '-h' or search_query == '--help':
-                exit('\n[*] Uso: python btsearch.py  "<SEARCH>"')
+                exit('[*] Uso: python btsearch.py  "<SEARCH>"')
                 
         def prettySize(size):
                 suffixes = [("B",2**10), ("K",2**20), ("M",2**30), ("G",2**40), ("T",2**50)]
@@ -169,7 +186,6 @@ def main(repeat=False):
         t = ThePirateBay()        
         print "[*] Procurando em http://thepiratebay.org por: {}".format(search_query)
         table = PrettyTable(['N', 'Nome', 'Tam',  'Seeders'])  #Datatable main string
-        table.title = 'Ordem por seeders: DESC | Order by sedeers: DESC'
         table.align['N'] = 'l'
         table.align['Nome'] = "l"
         table.align['Seeders'] = 'l'
@@ -192,10 +208,12 @@ def main(repeat=False):
                 else:
                         main(repeat=True)                
         else:
+                print '\n                   Ordem por seeders: DESC | Order by sedeers: DESC                   '
                 print table
+
                 
-                
-        asp = raw_input('\n[*] Insira um numero da lista: ')
+	print ('\n\n[*] Resultados encontrados: {}'.format(len(title_results_)))                
+        asp = raw_input('[*] Insira um numero da lista: ')
         choice = int(asp) - 1
         print "\n[*] Magnet link para {}.\n".format(title_results_[choice])
         print magnet_results_[choice]
