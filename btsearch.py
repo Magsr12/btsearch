@@ -184,7 +184,7 @@ def main(repeat=False):
                         else:
                                 return round(size/float(lim/2**10),2).__str__()+suf
         t = ThePirateBay()        
-        print "[*] Procurando em http://thepiratebay.org por: {}".format(search_query)
+        print "[*] Procurando em http://thepiratebay.org por: {}...".format(search_query)
         table = PrettyTable(['N', 'Nome', 'Tam',  'Seeders'])  #Datatable main string
         table.align['N'] = 'l'
         table.align['Nome'] = "l"
