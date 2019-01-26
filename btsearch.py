@@ -1,6 +1,6 @@
 #coding: utf-8
 
-import urllib2, sys, os, ssl, time, datetime
+import urllib2, sys, os, ssl, time, datetime, shutil
 from urllib import *
 from urlparse import *
 from prettytable import PrettyTable
@@ -145,7 +145,19 @@ class ThePirateBay:
 		return parser.parse()
 
 
+def update(): # Update the link file in $HOME if you changed this script
+	try:
+		os.remove(os.path.expanduser('~/') + sys.argv[0])
+		print '[*] {} removido.'.format(os.path.expanduser('~/') + sys.argv[0])
+	except WindowsError:
+		print '[*] Arquivo de link nao encontrado !'
+	finally:
+		shutil.copy(script_dir, home_dir)
+		print '[*] {} atualizado.'.format(script_dir + sys.argv[0])
+
 def copy_to_path(): #Func to copy the script to home dir
+	global script_dir
+	global home_dir
         script_dir = os.getcwd() + '/' + sys.argv[0]
         home_dir = os.path.expanduser('~/')        
         if os.path.isfile(home_dir + 'btsearch.py'):
@@ -164,6 +176,11 @@ def main(repeat=False):
         x = 0
         try:
                 search_query = sys.argv[1]
+		if search_query == '--help' or search_query == '-h':
+			exit('[*] Uso: python btsearch.py "<SEARCH>"')
+
+		if search_query == 'update': 
+			update()
                 if "'" in search_query:
                         exit('[*] ALERTA: voce deve utilizar ASPAS DUPLAS durante a pesquisa, ex: python btsearch.py "Avatar".')
 		else:
@@ -192,6 +209,7 @@ def main(repeat=False):
         table.align['Tam'] = 'l'
         
         for t in t.search(str(search_query)):
+		time_end = time.time() + 4 # Count 4 seconds before cancel the loop
                 x += 1
                 #output =  '[{}] '.format(x) + "(" + str(prettySize(t['size_of'])) + ")" + "__________" + t['name'].encode('utf-8') IF YOU WANT TO EDIT THE OUTPUT
                 magnet_results_.append(str(t['magnet_url']))
@@ -206,15 +224,16 @@ def main(repeat=False):
                 if timing == 4:
                         exit('[*] Nao foram encontrados resultados para {} em https://thepiratebay.org'.format(search_query))
                 else:
+			if timing == 2:
+				print '[*] 2 tentativas restantes.'
                         main(repeat=True)                
         else:
                 print '\n                   Ordem por seeders: DESC | Order by sedeers: DESC                   '
                 print table
-
-                
-	print ('\n\n[*] Resultados encontrados: {}'.format(len(title_results_)))                
-        asp = raw_input('[*] Insira um numero da lista: ')
-        choice = int(asp) - 1
+		print ('Resultados encontrados: {}'.format(len(title_results_)))  
+        
+	asp = raw_input('\n[*] Insira um numero da lista: ')
+	choice = int(asp) - 1
         print "\n[*] Magnet link para {}.\n".format(title_results_[choice])
         print magnet_results_[choice]
         asp2 = raw_input('\n[*] Deseja abrir Bittorrent ? [S/n]: ')
