@@ -1,5 +1,5 @@
-``` Usage: python btsearch.py "<QUERY>" 
-           python btsearch.py update```
+``` Usage: python btsearch.py "<QUERY>" ```
+```        python btsearch.py update ```
 
 
  
