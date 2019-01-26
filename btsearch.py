@@ -153,7 +153,7 @@ def update(): # Update the link file in $HOME if you changed this script
 		print '[*] Arquivo de link nao encontrado !'
 	finally:
 		shutil.copy(script_dir, home_dir)
-		print '[*] {} atualizado.'.format(script_dir + sys.argv[0])
+		print '[*] {} atualizado.'.format(home_dir + sys.argv[0])
 
 def copy_to_path(): #Func to copy the script to home dir
 	global script_dir
@@ -166,21 +166,21 @@ def copy_to_path(): #Func to copy the script to home dir
                 import shutil
                 shutil.copy(script_dir, home_dir)
                 print '[*] Criado link em {}'.format(home_dir + sys.argv[0])
-        
+
 def main(repeat=False):
         copy_to_path()
         global timing
-        magnet_results_ = []
-        title_results_ = []
-        seeders_results_ = []
+        magnet_results = [] # Add magnet results to a list
+        title_results = [] # Add title results to a list
+        seeders_results = [] # Add seeders results to a list
         x = 0
         try:
                 search_query = sys.argv[1]
-		if search_query == '--help' or search_query == '-h':
-			exit('[*] Uso: python btsearch.py "<SEARCH>"')
-
+		if search_query == '--help' or search_query == '-h' or search_query == 'help':
+			exit('[*] Uso: python btsearch.py "<SEARCH>"\n	 python btsearch.py update')
 		if search_query == 'update': 
 			update()
+			exit()
                 if "'" in search_query:
                         exit('[*] ALERTA: voce deve utilizar ASPAS DUPLAS durante a pesquisa, ex: python btsearch.py "Avatar".')
 		else:
@@ -193,7 +193,7 @@ def main(repeat=False):
         if search_query == '-h' or search_query == '--help':
                 exit('[*] Uso: python btsearch.py  "<SEARCH>"')
                 
-        def prettySize(size):
+        def prettySize(size): #Humanize retrieved length values from thepiratebay response
                 suffixes = [("B",2**10), ("K",2**20), ("M",2**30), ("G",2**40), ("T",2**50)]
                 for suf, lim in suffixes:
                         if size > lim:
@@ -202,44 +202,41 @@ def main(repeat=False):
                                 return round(size/float(lim/2**10),2).__str__()+suf
         t = ThePirateBay()        
         print "[*] Procurando em http://thepiratebay.org por: {}...".format(search_query)
-        table = PrettyTable(['N', 'Nome', 'Tam',  'Seeders'])  #Datatable main string
-        table.align['N'] = 'l'
+        table = PrettyTable(['N', 'Nome', 'Tam',  'Seeders'])  # Datatable main string
+        table.align['N'] = 'l' # Align N tables to the left side
         table.align['Nome'] = "l"
         table.align['Seeders'] = 'l'
         table.align['Tam'] = 'l'
         
-        for t in t.search(str(search_query)):
-		time_end = time.time() + 4 # Count 4 seconds before cancel the loop
+        for t in t.search(str(search_query)): # Main call
                 x += 1
-                #output =  '[{}] '.format(x) + "(" + str(prettySize(t['size_of'])) + ")" + "__________" + t['name'].encode('utf-8') IF YOU WANT TO EDIT THE OUTPUT
-                magnet_results_.append(str(t['magnet_url']))
-                title_results_.append(str(t['name'].encode('utf-8')))
-                seeders_results_.append(str(t['seeders']))
+                magnet_results.append(str(t['magnet_url']))
+                title_results.append(str(t['name'].encode('utf-8')))
+                seeders_results.append(str(t['seeders']))
                 table.add_row([x, t['name'].encode('utf-8'), str(prettySize(t['size_of'])), t['seeders']]) # Add the retrieved values to the table row
                 
-        if len(title_results_) == 0:
+        if len(title_results) == 0:
                 timing += 1
                 print '[*] Nenhum resultado encontrado, tentando novamente...'
                 time.sleep(2)
                 if timing == 4:
-                        exit('[*] Nao foram encontrados resultados para {} em https://thepiratebay.org'.format(search_query))
+                        exit('[*] Nao foram encontrados resultados para {} em https://thepiratebay.org'.format(search_query))	
                 else:
 			if timing == 2:
 				print '[*] 2 tentativas restantes.'
                         main(repeat=True)                
         else:
                 print '\n                   Ordem por seeders: DESC | Order by sedeers: DESC                   '
-                print table
-		print ('Resultados encontrados: {}'.format(len(title_results_)))  
+                print table 
         
 	asp = raw_input('\n[*] Insira um numero da lista: ')
 	choice = int(asp) - 1
-        print "\n[*] Magnet link para {}.\n".format(title_results_[choice])
-        print magnet_results_[choice]
+        print "\n[*] Magnet link para {}.\n".format(title_results[choice])
+        print magnet_results[choice]
         asp2 = raw_input('\n[*] Deseja abrir Bittorrent ? [S/n]: ')
         if asp2 == 'n':
                 exit()
         else:
-                cmd = os.system('start bittorrent "{}"'.format(magnet_results_[choice]))
+                cmd = os.system('start bittorrent "{}"'.format(magnet_results[choice]))
                 
 main()
