@@ -2,6 +2,7 @@ import os
 import ctypes
 import requests
 import platform
+import argparse
 from clint.textui import progress
 
 class Utils:
@@ -81,12 +82,16 @@ class Utils:
 
 
 
-class MainApps:
+class MainApp:
 	def __init__(self):
-		# P
-		self.db_path = 'C:\Program Files (x86)\IObit\Driver Boostr'
-		self.chrome_path = 'C:\Program Files (x86)\Google\Chroe'
-		self.winrar_path  = 'C:\Program Files\WinR'
+		# If you want to add some apps here just do: self.app_path = '_directory_from_app_'
+		#self.db_path = 'C:\Program Files (x86)\IObit\Driver Booster'
+		#self.chrome_path = 'C:\Program Files (x86)\Google\Chrome'
+		#self.winrar_path  = 'C:\Program Files\WinRAR'
+		#self.vlc_path = 'C:\Program Files\VideoLAN\VLC'
+		self.app_path = ['C:\Program Files (x86)\IObit\Driver Booster', 'C:\Program Files (x86)\Google\Chrome', 'C:\Program Files\WinRAR', 'C:\Program Files\VideoLAN\VLC']
+		self.app_range = len(self.app_path)
+		self.app_list = ['Driver Booster', 'Chrome', 'WINRAR', 'VLC']
 		self.missing = []
 		self.install_apps = []
 		# Links for apps
@@ -111,6 +116,12 @@ class MainApps:
                                 	f.flush()
 
 	def check_packages(self):
+		for i in range(self.app_range): # I am foda
+			if os.path.isdir(self.app_path[i]):
+				print '{} ENCONTRADO.'.format(self.app_list[i])
+			else:
+				print '{} NAO ENCONTRADO.'.format(self.app_list[i])
+		'''
 		if os.path.isdir(self.db_path):
         		print '[*] Driver booster instalado.'
 		else:
@@ -126,8 +137,9 @@ class MainApps:
 		else:
         		print '[*] WinRAR nao instalado.'
         		self.missing.append('winrar.exe')
+'''
 
-	def install_packages(self):
+	def install_packages(self, post_execute=False):
 		if len(self.missing) == 0:
 			pass
 		else:
@@ -139,7 +151,7 @@ class MainApps:
 					except KeyboardInterrupt:
 						pass
 					self.install_apps.append('db.exe')
-					print '[*] {} salvo.'.format(i)
+					print '[*] {} salvo em {}'.format(i, os.getcwd() + '/' + i)
 				if 'chrome-installer.exe' in i:
 					print '[*] Baixando chrome-installer.exe de: {}'.format(self.links[1])
 					try:
@@ -147,7 +159,7 @@ class MainApps:
 					except KeyboardInterrupt:
 						pass
 					self.install_apps.append('chrome-installer.exe')
-					print '[*] {} salvo.'.format(i)
+					print '[*] {} salvo em {}'.format(i, os.getcwd() + '/' + i)
 				if 'winrar.exe' in i:
 					print '[*] Baixando winrar.exe de: {}'.format(self.links[2])
 					try:
@@ -155,22 +167,53 @@ class MainApps:
 					except KeyboardInterrupt:
 						pass
 					self.install_apps.append('winrar.exe')
-					print '[*] {} salvo.'.format(i)
+					print '[*] {} salvo em {}'.format(i, os.getcwd() + '/' + i)
+			for i in self.missing:
+				if post_execute is True:
+					print '[*] Executando {}'.format(i)
+					os.system('{}'.format(i))
+					ask_continue = raw_input('[*] Abrir o proximo instalador [ENTER]')
+				
+		
 
 				
 
-def info():
-	print '[OS_INFO] ' + platform.platform() + ' ' + platform.machine() + ' '+ platform.node() 	
- 
 #is_admin = ctypes.windll.shell32.IsUserAnAdmin() != 0 # Check if the user is Admin
 #if is_admin is False:
-#	exit('\n[*] Voce precisa iniciar este script como admin !')
-		
+#	exit('\n[*] Voce precisa iniciar este script como admin !')	
 #b = MainApps()
 #b.check_packages()
 #b.install_packages()
 
-info()
+w_utils = Utils()
+w_packages = MainApp()
+
+def main():
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--download-apps', help='Somente baixa os aplicativos necessarios.', action='store_true', dest='download_apps', default=False)
+	parser.add_argument('--install-apps', help='Baixa e instala os aplicativos necessarios.', action='store_true', dest='install_apps', default=False)
+	parser.add_argument('--check-apps', help='Verifica se os aplicativos necessarios estao instalados.', action='store_true', dest='check_apps', default=False)
+	parser.add_argument('--list-apps', help='Lista os aplicativos definidos como necessarios', action='store_true', dest='list_apps', default=False)
+        args = parser.parse_args()
+	just_download = args.download_apps
+	download_and_install = args.install_apps
+	check_apps = args.check_apps
+	list_apps = args.list_apps
+	if list_apps is True:
+		for i in w_packages.all_apps:
+			print i
+	if check_apps is True:
+		w_packages.check_packages()
+	if just_download is True:
+		w_packages.check_packages()
+		w_packages.install_packages()
+	if download_and_install is True:
+		w_packages.check_packages()
+		w_packages.install_packages(post_execute=True)
+
+		
+
+main()
 	
 		
 		
