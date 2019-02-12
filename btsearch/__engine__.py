@@ -12,9 +12,10 @@ hdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML,
 'Connection': 'keep-alive'}
 
 def kickass(query):
-    page = 0
+    page = 1
     for i in range(1, int(PAGE_RANGE)):
         url = 'https://kickasstorrents.to/usearch/' + query + '/' + str(page)
+        print '[*] ' + url
         r = requests.get(url, headers=hdr)
         response = BeautifulSoup(r.content, 'lxml')
         for t in response.find_all('a', {'class':'cellMainLink'}): # GET TORRENT TITLES

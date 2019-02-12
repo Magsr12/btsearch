@@ -5,10 +5,11 @@ import sys
 
 
 def main(_engine_='tpb, kickass', repeat=False):
-    table = PrettyTable(['N', 'Nome', 'Tam'])
+    table = PrettyTable(['N', 'Nome', 'Tam', 'Seeders'])
     table.align['N'], = 'l'
     table.align['Nome'] = 'l'
     table.align['Tam'] = 'l'
+    table.align['Seeders'] = 'l'
     x = 0
     if 'kickass' in _engine_:
     	print '[*] Query: {} | PAGE_RANGE: {}'.format(sys.argv[1], PAGE_RANGE)
@@ -19,9 +20,9 @@ def main(_engine_='tpb, kickass', repeat=False):
     		main(repeat=True)
     	else:
     		print '[*] Resultados de https://kickasstorrents.to para: ' + sys.argv[1]
-    		for a, b in zip(titles, sizes):
+    		for a, b, c in zip(titles, sizes, kickass_seeders):
     			x += 1
-    			table.add_row([x, a[:40], b])
+    			table.add_row([x, a[:40], b, c])
     		print table
     		print '[*] {} resultados encontrados'.format(len(titles))
     		asp = raw_input('[*] Selecione: ')
