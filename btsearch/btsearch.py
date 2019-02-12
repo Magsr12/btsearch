@@ -6,6 +6,7 @@ import sys
 
 def main(_engine_='tpb, kickass', repeat=False):
     table = PrettyTable(['N', 'Nome', 'Tam'])
+    table.align['N'], = 'l'
     table.align['Nome'] = 'l'
     table.align['Tam'] = 'l'
     x = 0
@@ -20,7 +21,7 @@ def main(_engine_='tpb, kickass', repeat=False):
     		print '[*] Resultados de https://kickasstorrents.to para: ' + sys.argv[1]
     		for a, b in zip(titles, sizes):
     			x += 1
-    			table.add_row([x, a, b])
+    			table.add_row([x, a[:40], b])
     		print table
     		print '[*] {} resultados encontrados'.format(len(titles))
     		asp = raw_input('[*] Selecione: ')
@@ -28,19 +29,5 @@ def main(_engine_='tpb, kickass', repeat=False):
     		print '\n' + titles[choice]
     		retrieve_magnet(url='https://kickasstorrents.to/' + links[choice])
 
-
-def results():
-    table = PrettyTable(['N', 'Nome', 'Tam'])
-    table.align['Nome'] = 'l'
-    table.align['Tam'] = 'l'
-    x = 0
-    for a, b in zip(titles, sizes):
-        x +=1 
-        table.add_row([x, a, b])
-    print table
-
-    choice = int(asp) - 1
-    print '\n' + titles[choice]
-    retrieve_magnet(url='https://kickasstorrents.to/' + links[choice])
      
 main()
