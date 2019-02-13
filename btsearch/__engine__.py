@@ -15,29 +15,28 @@ def kickass(query):
     page = 1
     for i in range(1, int(PAGE_RANGE)):
         url = 'https://kickasstorrents.to/usearch/' + query + '/' + str(page)
-        print '[*] ' + url
         r = requests.get(url, headers=hdr)
         response = BeautifulSoup(r.content, 'lxml')
         for t in response.find_all('a', {'class':'cellMainLink'}): # GET TORRENT TITLES
-            titles.append(t.get_text().strip())
+            k_titles.append(t.get_text().encode('ascii', 'ignore').strip())
         for s in response.find_all('td', {'class': 'nobr center'}): # GET SIZE FROM TORRENT FILES
-            sizes.append(s.get_text().strip())
+            k_sizes.append(s.get_text().strip())
         for seeds in response.find_all('td', {'class': 'green center'}): # GET SEEDERS FROM TORRENT FILES
-            kickass_seeders.append(seeds.get_text().strip())
+            k_seeders.append(seeds.get_text().strip())
         for html in response.find_all('a', {'class': 'cellMainLink'}, href=True):
-            links.append(html['href'].encode('utf-8'))
+            k_links.append(html['href'].encode('utf-8'))
         page += 1
 
 def tpb(query):
-    page = 0
+    page = 1
     for i in range(1, int(PAGE_RANGE)):
-        url = 'http://thepiratebay.org/search/' + query
+        url = 'http://thepiratebay.org/search/' + query + '/' + str(page)
         r = requests.get(url, headers=hdr)
         response = BeautifulSoup(r.content, 'lxml')
         for t in response.find_all('a', {'class':'detLink'}): # GET TORRENT TITLES
-            titles.append(t.get_text().strip())
-        for s in response.find_all('tr', {'class':'alt'}): # GET TORRENT SEEDERS, I CANT RESOLVE THIS, ESTA PUXANDO SEEDERS E LEECHERS JUNTOS.
-            seeders.append(s.get_text().strip())
+            t_titles.append(t.get_text().strip())
+        #for s in response.find_all('tr', {'class':'alt'}): # GET TORRENT SEEDERS, I CANT RESOLVE THIS, ESTA PUXANDO SEEDERS E LEECHERS JUNTOS.
+         #   seeders.append(s.get_text().strip())
         for siz in response.find_all('font', {'class': 'detDesc'}):
             _siz_ = siz.get_text().strip()
             _siz_ = _siz_[21:34]
@@ -48,9 +47,9 @@ def tpb(query):
                 _siz_ = _siz_.replace("GiB", ' GB')
             if "Mi" in _siz_:
                 _siz_ = _siz_.replace("MiB", ' MB')
-            sizes.append(_siz_.encode('ascii', 'ignore')) # Convert unicode to string
+            t_sizes.append(_siz_.encode('ascii', 'ignore')) # Convert unicode to string
         for magnet in response.find_all('a', {'title': 'Download this torrent using magnet'}):
-            magnets.append(magnet['href'])
+            t_magnets.append(magnet['href'])
         page += 1
 
 def retrieve_magnet(url):
