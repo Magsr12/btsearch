@@ -29,15 +29,19 @@ def kickass(query):
         page += 1
 
 def tpb(query):
-    page = 1
+    page = 0
+    r_seeders = 0 
     for i in range(1, int(PAGE_RANGE)):
         url = 'http://thepiratebay.org/search/' + query + '/' + str(page)
         r = requests.get(url, headers=hdr)
         response = BeautifulSoup(r.content, 'lxml')
         for t in response.find_all('a', {'class':'detLink'}): # GET TORRENT TITLES
             t_titles.append(t.get_text().strip())
-        #for s in response.find_all('tr', {'class':'alt'}): # GET TORRENT SEEDERS, I CANT RESOLVE THIS, ESTA PUXANDO SEEDERS E LEECHERS JUNTOS.
-         #   seeders.append(s.get_text().strip())
+        for s in response.find_all('td', {'align':'right'}):
+            r_seeders += 1 
+            if r_seeders % 2 == 1: # GET ONLY TORRENT SEEDERS.
+                t_seeders.append(s.get_text().strip())
+
         for siz in response.find_all('font', {'class': 'detDesc'}):
             _siz_ = siz.get_text().strip()
             _siz_ = _siz_[21:34]

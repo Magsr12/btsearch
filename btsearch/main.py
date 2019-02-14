@@ -51,10 +51,11 @@ def init(call='kickass', repeat=False, x=0):
                 exit()
 
     else:
-        table = PrettyTable(['N', 'Nome', 'Tam'])
+        table = PrettyTable(['N', 'Nome', 'Tam', 'Seeders'])
         table.align['N'], = 'l'
         table.align['Nome'] = 'l'
         table.align['Tam'] = 'l'
+        table.align['Seeders'] = 'l'
         print YELLOW + '[*] Procurando em thepiratebay.org por: {}...'.format(sys.argv[1]) + NORMAL
         tpb(sys.argv[1])
         if len(t_titles) == 0:
@@ -71,9 +72,9 @@ def init(call='kickass', repeat=False, x=0):
 
         else:
             print '[*] Resultados de thepiratebay.org para: ' + NORMAL + sys.argv[1]
-            for a, b in zip(t_titles,t_sizes):
+            for a, b, c in zip(t_titles,t_sizes,t_seeders):
                 x += 1
-                table.add_row([x, a[:50], b])
+                table.add_row([x, a[:50], b, c])
             print table
             print YELLOW + '[*] {} resultados encontrados'.format(len(t_titles)) + NORMAL
             asp = raw_input('[*] Selecione um numero da lista: ')
