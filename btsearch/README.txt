@@ -1,5 +1,6 @@
-### Btsearch - A multi torrent search across the web ### LANG: PT-B
+// Btsearch - A multi torrent search across the web \\ 
 git: https://github.com/richardparker6103/btsearch
+LANG: PT-BR
 
 PYTHON LIBRARIES: lxml
                   colorama
