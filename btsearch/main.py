@@ -3,6 +3,7 @@
 from prettytable import PrettyTable
 from __engine__ import *
 from __colors__ import *
+from __temp__ import *
 import time
 import sys
 import os
@@ -45,9 +46,11 @@ def init(call='kickass', repeat=False, x=0):
                 retrieve_magnet(url='https://kickasstorrents.to/' + k_links[choice])
             asp = raw_input('\n[*] Deseja abrir aplicativo torrent ? [S/n]: ')
             if asp == 'n':
+                clean_pyc_files()
                 exit()
             else:
                 os.system('start bittorrent "{}"'.format(t_magnets[choice]))
+                clean_pyc_files()
                 exit()
 
     else:
@@ -62,6 +65,7 @@ def init(call='kickass', repeat=False, x=0):
             x += 1
             if x == 3:
                 print RED + '[*] Nenhum resultado encontrado em thepiratebay.org' + NORMAL
+                clean_pyc_files()
                 exit()
             if x == 1:
                 print RED + '[*] 2 tentativas restantes...' + NORMAL
@@ -83,8 +87,10 @@ def init(call='kickass', repeat=False, x=0):
             print t_magnets[choice]
             asp = raw_input('\n[*] Deseja abrir aplicativo torrent ? [S/n]: ')
             if asp == 'n':
+                clean_pyc_files()
                 exit()
             else:
                 os.system('start bittorrent "{}"'.format(t_magnets[choice]))
+                clean_pyc_files()
                 exit()
 
