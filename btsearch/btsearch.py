@@ -1,8 +1,11 @@
 #coding: utf-8
 import os
-from main import *
-from __strings__ import *
 
+try:
+    import requests
+except ImportError:
+    print '[*] requests nao instalado, tentando instalar...'
+    os.system('pip install requests')
 try:
     import lxml
 except ImportError:
@@ -26,6 +29,9 @@ try:
 except ImportError:
     print '[*] colorama nao instalado, tentando instalar...'
     os.system('pip install colorama')
+
+from main import *
+from __strings__ import *
 
 if len(sys.argv) < 2:
 	exit('[*] Uso: python btsearch.py SEARCH')

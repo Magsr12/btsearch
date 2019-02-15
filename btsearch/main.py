@@ -59,7 +59,7 @@ def init(call='kickass', repeat=False, x=0):
         table.align['Nome'] = 'l'
         table.align['Tam'] = 'l'
         table.align['Seeders'] = 'l'
-        print YELLOW + '[*] Procurando em thepiratebay.org por: {}...'.format(sys.argv[1]) + NORMAL
+        print YELLOW + '[*] Procurando em thepiratebay.org por: {}...'.format(NORMAL + sys.argv[1])
         tpb(sys.argv[1])
         if len(t_titles) == 0:
             x += 1
