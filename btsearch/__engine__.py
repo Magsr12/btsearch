@@ -5,6 +5,7 @@ from __strings__ import *
 import lxml
 import requests
 
+
 hdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
 'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
@@ -57,13 +58,50 @@ def tpb(query):
             t_magnets.append(magnet['href'])
         page += 1
 
-def retrieve_magnet(url):
+def x1337(query):
+    page = 1
+    for i in range(1, int(PAGE_RANGE)):
+        url = 'https://1337x.to/search/' + query + '/' + str(page) + '/'
+        r = requests.get(url, headers=hdr)
+        response = BeautifulSoup(r.content, 'lxml')
+        for t in response.find_all('td', {'class':'coll-1 name'}):
+            x_titles.append(t.get_text().encode('ascii', 'ignore'))
+        for s in response.find_all('td', {'class': 'coll-2 seeds'}):
+            x_seeders.append(s.get_text())
+        for siz in response.find_all('td', {'class': 'coll-4 size mob-uploader'}):
+            sep = 'GB'  #https://stackoverflow.com/questions/904746/how-to-remove-all-characters-after-a-specific-character-in-python
+            sep2 = 'MB'
+            _siz_ = siz.get_text()
+            if 'GB' in _siz_:
+                x_sizes.append(_siz_.split(sep,1)[0] + 'GB')
+            elif 'MB' in _siz_:
+                x_sizes.append(_siz_.split(sep2,1)[0] + 'MB')
+        for html in response.find_all('a', href=True):
+            if '/torrent/' in html['href']:
+                x_links.append(html['href'].encode('utf-8'))
+        page += 1
+
+
+
+
+def retrieve_magnet(url, call='kickass'):
     t = 0
     r = requests.get(url, headers=hdr)
     response = BeautifulSoup(r.content, 'lxml')
-    for magnet in response.find_all('a', {'class': 'siteButton giantButton'}, href=True):
-        t += 1
-        if t == 1:
-            print '\n' + magnet['href']
-        else:
-            pass
+    if '1337x' in call:
+        for magnet in response.find_all('a', {'class': 'ddcbbdeb btn btn-bfafeddf'}):
+            t += 1
+            if t == 1:
+                print '\n' + magnet['href']
+                x_magnets.append(magnet['href'])
+            else:
+                pass
+    else:
+        for magnet in response.find_all('a', {'class': 'siteButton giantButton'}, href=True):
+            t += 1
+            if t == 1:
+                print '\n' + magnet['href']
+                k_magnets.append(magnet['href'])
+            else:
+                pass
+
