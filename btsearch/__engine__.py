@@ -2,6 +2,7 @@
 
 from bs4 import *
 from __strings__ import *
+from __colors__ import CYAN, NORMAL
 import lxml
 import requests
 
@@ -13,7 +14,31 @@ hdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML,
 'Accept-Language': 'en-US,en;q=0.8',
 'Connection': 'keep-alive'}
 
-def kickass(query):
+def bludv(query, PAGE_RANGE, verbose=False):
+    page = 1
+    for i in range(1, int(PAGE_RANGE)): 
+        url = 'https://bludvcomandotorrents.com/torrent/' + query + '/{}/'.format(int(page))
+        r = requests.get(url, headers=hdr)
+        response = BeautifulSoup(r.content, 'lxml')
+        for t in response.find_all('img', {'class':'img-responsive'}):
+            if verbose:
+                print CYAN + '[*] Selecionando: ' + str(t['alt'].encode('ascii', 'ignore')) + NORMAL
+            bludv_titles.append(t['alt'].encode('utf-8'))
+        for l in response.find_all('a', href=True):
+            if 'https://bludvcomandotorrents.com/f' in l['href'] or 'https://bludvcomandotorrents.com/j' in l['href']:
+                if verbose:
+                    print CYAN + '[*] Adicionando: ' + str(l['href']) + NORMAL
+                bludv_links.append(l['href'])
+        for urls in bludv_links:
+            r = requests.get(urls, headers=hdr)
+            response = BeautifulSoup(r.content, 'lxml')
+            for m in response.find_all('a', {'class':'text-center newdawn'}):
+                if verbose:
+                    print CYAN + '[*] Encontrado: '+ str(m['href']) + NORMAL
+                bludv_magnets.append(m['href'])
+        page += 1
+
+def kickass(query, PAGE_RANGE):
     page = 1
     for i in range(1, int(PAGE_RANGE)):
         url = 'https://kickasstorrents.to/usearch/' + query + '/' + str(page)
@@ -29,7 +54,7 @@ def kickass(query):
             k_links.append(html['href'].encode('utf-8'))
         page += 1
 
-def tpb(query):
+def tpb(query, PAGE_RANGE):
     page = 0
     r_seeders = 0 
     for i in range(1, int(PAGE_RANGE)):
@@ -58,7 +83,7 @@ def tpb(query):
             t_magnets.append(magnet['href'])
         page += 1
 
-def x1337(query):
+def x1337(query, PAGE_RANGE):
     page = 1
     for i in range(1, int(PAGE_RANGE)):
         url = 'https://1337x.to/search/' + query + '/' + str(page) + '/'

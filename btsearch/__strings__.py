@@ -1,4 +1,3 @@
-PAGE_RANGE = 4 # CHANGE THIS TO ADD MORE PAGES IN SEARCHING
 k_titles = []
 k_sizes = []
 k_seeders = []
@@ -13,5 +12,9 @@ x_sizes = []
 x_seeders = []
 x_magnets = []
 x_links = []
+bludv_titles = []
+bludv_links = []
+bludv_magnets = []
+bludv_seedeers = []
 temp_list = []
 

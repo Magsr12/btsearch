@@ -9,15 +9,50 @@ import sys
 import os
 
 
-def init(call='kickass', repeat=False, x=0):
-    table = PrettyTable(['N', 'Nome', 'Tam', 'Seeders'])
-    table.align['N'] = 'l'
-    table.align['Nome'] = 'l'
-    table.align['Tam'] = 'l'
-    table.align['Seeders'] = 'l'
+def init(call='kickass', movies=False, verbose=False, PAGE_RANGE=4, repeat=False, x=0):
+    if not movies:
+        table = PrettyTable(['N', 'Nome', 'Tam', 'Seeders'])
+        table.align['N'] = 'l'
+        table.align['Nome'] = 'l'
+        table.align['Tam'] = 'l'
+        table.align['Seeders'] = 'l'
+    else:
+        table = PrettyTable(['N', 'Nome'])
+        table.align['N'] = 'l'
+        table.align['Nome'] = 'l'
+
+    if movies:
+        if 'bludv' in call:
+            if int(PAGE_RANGE) >= 3:
+                print '[*] Recomenda-se diminuir o numero de paginas em -r para acelerar a busca.'
+            print '[*] Procurando em sites nao oficiais, use --verbose para acompanhar o processo.'
+            print GREEN + '[*] Procurando em bludvcomandotorrents.com por: {}'.format(NORMAL + sys.argv[1])
+            bludv(sys.argv[1], PAGE_RANGE, verbose=verbose)
+            if len(bludv_titles) == 0:
+                x += 1
+                if x == 3:
+                    print RED + '[*] Nenhum resultado encontrado em bludvcomandotorrents.com'
+                    init(call='kickass')
+                if x == 1:
+                    print RED + '[*] 2 tentativas restantes...'
+                if x != 3:
+                    print RED + '[*] Nenhum resultado encontrado, tentando novamente...' + NORMAL
+                    init(call='bludv', x=x)
+            else:
+
+                print YELLOW + '[*] Resultados de bludvcomandotorrents.com para: ' + NORMAL + sys.argv[1]
+                for a in bludv_titles:
+                    x += 1
+                    table.add_row([x, a[:50]])
+                print table
+                print GREEN + '[*] {} resultados encontrados para as {} primeiras paginas.'.format(len(bludv_titles), int(PAGE_RANGE)) + NORMAL
+                resp = raw_input('[*] Selecione um numero da lista: ')
+                blu_choice = int(resp) - 1
+                print '\n' + bludv_titles[blu_choice] + '\n\n' + bludv_magnets[blu_choice]
+
     if 'kickass' in call:
         print YELLOW + '[*] Procurando em kickasstorrents.to por: {}...'.format(NORMAL + sys.argv[1])
-        kickass(sys.argv[1])
+        kickass(sys.argv[1], PAGE_RANGE)
         if len(k_titles) == 0:
             x += 1
             if x == 3:
@@ -55,7 +90,7 @@ def init(call='kickass', repeat=False, x=0):
 
     elif 'tpb' in call:
         print YELLOW + '[*] Procurando em thepiratebay.org por: {}...'.format(NORMAL + sys.argv[1])
-        tpb(sys.argv[1])
+        tpb(sys.argv[1], PAGE_RANGE)
         if len(t_titles) == 0:
             x += 1
             if x == 3:
@@ -92,7 +127,7 @@ def init(call='kickass', repeat=False, x=0):
                 exit()
     elif '1337x' in call:
         print YELLOW + '[*] Procurando em 1337x.to por: {}...'.format(NORMAL + sys.argv[1])
-        x1337(sys.argv[1])
+        x1337(sys.argv[1], PAGE_RANGE)
         if len(x_titles) == 0:
             x += 1
             if x == 3:
