@@ -49,10 +49,11 @@ def init(call='kickass', movies=False, verbose=False, PAGE_RANGE=4, repeat=False
                 resp = raw_input('[*] Selecione um numero da lista: ')
                 blu_choice = int(resp) - 1
                 print '\n' + bludv_titles[blu_choice] + '\n\n' + bludv_magnets[blu_choice]
+                clean_pyc_files()
 
     if 'kickass' in call:
         print YELLOW + '[*] Procurando em kickasstorrents.to por: {}...'.format(NORMAL + sys.argv[1])
-        kickass(sys.argv[1], PAGE_RANGE)
+        kickass(sys.argv[1], PAGE_RANGE,verbose=verbose)
         if len(k_titles) == 0:
             x += 1
             if x == 3:
@@ -90,7 +91,7 @@ def init(call='kickass', movies=False, verbose=False, PAGE_RANGE=4, repeat=False
 
     elif 'tpb' in call:
         print YELLOW + '[*] Procurando em thepiratebay.org por: {}...'.format(NORMAL + sys.argv[1])
-        tpb(sys.argv[1], PAGE_RANGE)
+        tpb(sys.argv[1], PAGE_RANGE, verbose=verbose)
         if len(t_titles) == 0:
             x += 1
             if x == 3:

@@ -72,14 +72,14 @@ if calls:
             init(call='kickass')
     elif 'kickass' in calls:
         if new_range:
-            init(call='kickass', PAGE_RANGE=new_range)
+            init(call='kickass', PAGE_RANGE=new_range, verbose=verbose)
         else:
-            init(call='kickass')
+            init(call='kickass', verbose=verbose)
     elif 'tpb' in calls:
         if new_range:
-            init(call='tpb', PAGE_RANGE=new_range)
+            init(call='tpb', PAGE_RANGE=new_range, verbose=verbose)
         else:
-            init(call='tpb')
+            init(call='tpb', verbose=verbose)
     elif '1337x' in calls:
         if new_range:
             init(call='1337x', PAGE_RANGE=new_range)

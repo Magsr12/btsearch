@@ -38,13 +38,17 @@ def bludv(query, PAGE_RANGE, verbose=False):
                 bludv_magnets.append(m['href'])
         page += 1
 
-def kickass(query, PAGE_RANGE):
+def kickass(query, PAGE_RANGE, verbose=False):
     page = 1
     for i in range(1, int(PAGE_RANGE)):
         url = 'https://kickasstorrents.to/usearch/' + query + '/' + str(page)
         r = requests.get(url, headers=hdr)
         response = BeautifulSoup(r.content, 'lxml')
+        if verbose:
+            print CYAN + 'Pagina: ' + str(i) + ' ' + str(r) + NORMAL
         for t in response.find_all('a', {'class':'cellMainLink'}): # GET TORRENT TITLES
+            if verbose:
+                print CYAN + 'Encontrado: ' + t.get_text().encode('ascii', 'ignore').strip() + NORMAL
             k_titles.append(t.get_text().encode('ascii', 'ignore').strip())
         for s in response.find_all('td', {'class': 'nobr center'}): # GET SIZE FROM TORRENT FILES
             k_sizes.append(s.get_text().strip())
@@ -54,7 +58,7 @@ def kickass(query, PAGE_RANGE):
             k_links.append(html['href'].encode('utf-8'))
         page += 1
 
-def tpb(query, PAGE_RANGE):
+def tpb(query, PAGE_RANGE, verbose):
     page = 0
     r_seeders = 0 
     for i in range(1, int(PAGE_RANGE)):
@@ -62,9 +66,13 @@ def tpb(query, PAGE_RANGE):
         r = requests.get(url, headers=hdr)
         response = BeautifulSoup(r.content, 'lxml')
         for t in response.find_all('a', {'class':'detLink'}): # GET TORRENT TITLES
-            t_titles.append(t.get_text().strip())
+            if verbose:
+                print CYAN + str(t.get_text().strip().encode('ascii', 'ignore')) + NORMAL
+            t_titles.append(t.get_text().strip().encode('ascii', 'ignore'))
+        if verbose:
+            print CYAN + '[*] Limitando valores de seeds e leechers...' + NORMAL           
         for s in response.find_all('td', {'align':'right'}):
-            r_seeders += 1 
+            r_seeders += 1
             if r_seeders % 2 == 1: # GET ONLY TORRENT SEEDERS.
                 t_seeders.append(s.get_text().strip())
 
@@ -80,6 +88,8 @@ def tpb(query, PAGE_RANGE):
                 _siz_ = _siz_.replace("MiB", ' MB')
             t_sizes.append(_siz_.encode('ascii', 'ignore')) # Convert unicode to string
         for magnet in response.find_all('a', {'title': 'Download this torrent using magnet'}):
+            if verbose:
+                print CYAN + str(magnet['href'])
             t_magnets.append(magnet['href'])
         page += 1
 
