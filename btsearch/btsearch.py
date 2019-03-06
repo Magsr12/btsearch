@@ -1,33 +1,14 @@
 #coding: utf-8
 import os
 import argparse
-from main import *
 from __strings__ import *
-from __colors__ import *
-
 try:
-    import lxml
+	from main import *
+	from __colors__ import *
 except ImportError:
-    print '[*] lxml nao instalado, tentando instalar...'
-    os.system('pip install lxml')
-
-try:
-    import prettytable
-except ImportError:
-    print '[*] prettytable nao instalado, tentando instalar...'
-    os.system('pip install prettytable')
-
-try:
-    import bs4
-except ImportError:
-    print '[*] bs4 nao instalado, tentando instalar...'
-    os.system('pip install bs4')
-
-try:
-    import colorama
-except ImportError:
-    print '[*] colorama nao instalado, tentando instalar...'
-    os.system('pip install colorama')
+	os.system('pip install -r requirements.txt')
+	from main import *
+	from __colors__ import *
 
 usage = RED + '''
 888888b. 88888888888 .d8888b.  8888888888        d8888 8888888b.   .d8888b.  888    888 
