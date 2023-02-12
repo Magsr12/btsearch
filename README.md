@@ -5,7 +5,10 @@ colorama
 lxml
 bs4
 
-``` Usage: python btsearch.py "SEARCH" ```
+``` INSTALL: pip install -r requirements.txt ```
+``` python btsearch.py "SEARCH" ```
+
+enjoy!
 
 
 
