@@ -13,7 +13,7 @@ colorama.init()
 
 BOLD = '\033[1m'
 CYAN = BOLD + '\033[36m'
-NORMAL = BOLD + '\033[37m'
+NORMAL = '\033[39m'
 YELLOW = BOLD + '\033[33m'
 RED = BOLD + '\033[31m'
 GREEN = BOLD + '\033[32m'
@@ -26,20 +26,19 @@ hdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML,
 'Connection': 'keep-alive'}
 
 banner = """
-https://github.com/magsr12/btsearch
-
-888888b. 88888888888 .d8888b.  8888888888        d8888 8888888b.   .d8888b.  888    888 
-888  "88b    888    d88P  Y88b 888              d88888 888   Y88b d88P  Y88b 888    888 
-888  .88P    888    Y88b.      888             d88P888 888    888 888    888 888    888 
-8888888K.    888     "Y888b.   8888888        d88P 888 888   d88P 888        8888888888 
-888  "Y88b   888        "Y88b. 888           d88P  888 8888888P"  888        888    888 
-888    888   888          "888 888          d88P   888 888 T88b   888    888 888    888 
-888   d88P   888    Y88b  d88P 888         d8888888888 888  T88b  Y88b  d88P 888    888 
-8888888P"    888     "Y8888P"  8888888888 d88P     888 888   T88b  "Y8888P"  888    888 
-                                                                                
-                                                                                ver: 2.0
-
-Usage: python btsearch.py -s 'SEARCH' (make sure to use parenthesis)"""
+                                                    (https://github.com/magsr12/btsearch)
+|---------------------------------------------------------------------------------------|
+|888888b. 88888888888 .d8888b.  8888888888        d8888 8888888b.   .d8888b.  888    888|
+|888  "88b    888    d88P  Y88b 888              d88888 888   Y88b d88P  Y88b 888    888| 
+|888  .88P    888    Y88b.      888             d88P888 888    888 888    888 888    888| 
+|8888888K.    888     "Y888b.   8888888        d88P 888 888   d88P 888        8888888888| 
+|888  "Y88b   888        "Y88b. 888           d88P  888 8888888P"  888        888    888| 
+|888    888   888          "888 888          d88P   888 888 T88b   888    888 888    888| 
+|888   d88P   888    Y88b  d88P 888         d8888888888 888  T88b  Y88b  d88P 888    888| 
+|8888888P"    888     "Y8888P"  8888888888 d88P     888 888   T88b  "Y8888P"  888    888|
+|---------------------------------------------------------------------------------------|
+                                                                               (ver: 2.0)                            
+"""
 
 k_titles = []
 k_sizes = []
@@ -59,7 +58,7 @@ def search(query, PAGE_RANGE=4, verbose=True):
         response = BeautifulSoup(r.content, 'lxml')
         print("[*] Connecting to {}".format(search_url))
         if verbose:
-            print('Page: ' + str(i), ' ', str(r))
+            print('[*] Page: ' + str(i), ' ', str(r))
         for t in response.find_all('a', {'class':'cellMainLink'}): # GET TORRENT TITLES
             if verbose:
                 print('found:', t.get_text().strip())
@@ -72,7 +71,7 @@ def search(query, PAGE_RANGE=4, verbose=True):
             k_links.append(html['href'].strip())
         page += 1
     t = 0
-    print("\n[*] {} links are found on {} for search: {}".format(len(k_links), only_url, sys.argv[1]))
+    print("\n[*] {} links are found on {} for search: {}".format(len(k_links), only_url, query))
     print("[*] Trying to retrieve magnet links...\n")
     time.sleep(1)
     for discover_magnet in k_links:
@@ -87,12 +86,15 @@ def search(query, PAGE_RANGE=4, verbose=True):
             else:
                 pass
 
-    print("\n[*] btsearch has found {} titles and {} possible magnets links".format(len(k_links), len(k_magnets)))
+    print("\n[*] btsearch has found {} titles and {} possible magnets links".format(len(k_titles), len(k_magnets)))
+    if len(k_titles) == 0:
+        print(RED + "[*] btsearch has not found any expressive results...", NORMAL)
+        ask_if_continue = input("[*] nothing found for {} in kat.me, do you want to continue? [Y/n]:".format(query))
+        if ask_if_continue.lower() == "n":
+            exit()
     print("[*] trying to retrieve magnet in torrents pages...\n[*] Please wait...\n")
     time.sleep(2)
     c = 0
-    if len(k_titles) == "0":
-        exit("[*] btsearch has not found any expressive results.")
     for x in k_titles:
         c += 1
         print("[{}] {}".format(c, x))
@@ -107,9 +109,10 @@ def search(query, PAGE_RANGE=4, verbose=True):
 
 
 if len(sys.argv) < 2:
-    exit(banner)
+    print(YELLOW, banner, NORMAL)
+    exit("Usage: python btsearch.py -s 'SEARCH' (make sure to use parenthesis)")
 if '--help' in sys.argv or '-h' in sys.argv:
-    exit(banner)
+    print(YELLOW, banner, NORMAL)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-s', required=True, dest='search_query', help='Seach query, remember to use parenthesis in search. e.g: "python btsearch.py -s "life of pi"')
