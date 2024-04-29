@@ -1,15 +1,5 @@
-import time
 import os
-import argparse
 import sys
-import requests
-import lxml
-import colorama
-
-from bs4 import *
-from prettytable import PrettyTable
-
-colorama.init()
 
 BOLD = '\033[1m'
 CYAN = BOLD + '\033[36m'
@@ -17,6 +7,29 @@ NORMAL = '\033[39m'
 YELLOW = BOLD + '\033[33m'
 RED = BOLD + '\033[31m'
 GREEN = BOLD + '\033[32m'
+
+try:
+    from bs4 import *
+    from prettytable import PrettyTable
+    from torrentool.api import Torrent
+    import time
+    import argparse
+    import sys
+    import requests
+    import lxml
+    import colorama
+    colorama.init()
+except (ImportError, ModuleNotFoundError):
+    print(RED, "[*] Error importing libraries, trying to install...", NORMAL)
+    tr = os.system("python3 -m pip install -r requirements.txt --break-system-packages")
+    if tr != 0:
+        print(RED, "\n[*] Something was wrong while importing libraries, please check your python3-pip status and the requirements file (requirements.txt)", NORMAL)
+        exit()
+
+
+
+
+
 
 hdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -47,7 +60,7 @@ k_links = []
 k_magnets = []
 
 def search(query, PAGE_RANGE=4, verbose=True):
-    print("[*] Starting btsearch...")
+    print(banner, "\n[*] Starting btsearch...")
     time.sleep(2)
     page = 1
     print("[*] Creating lists and setting up...")
@@ -71,7 +84,7 @@ def search(query, PAGE_RANGE=4, verbose=True):
             k_links.append(html['href'].strip())
         page += 1
     t = 0
-    print("\n[*] {} links are found on {} for search: {}".format(len(k_links), only_url, query))
+    print("[*] {} links are found on {} for search: {}".format(len(k_links), only_url, query))
     print("[*] Trying to retrieve magnet links...\n")
     time.sleep(1)
     for discover_magnet in k_links:
@@ -102,15 +115,16 @@ def search(query, PAGE_RANGE=4, verbose=True):
     ch = int(ch) - 1
     print("[*] Retrieving data from title {}".format(k_titles[int(ch)]))
     print("\n", k_titles[int(ch)])
-    print("\n", GREEN, k_magnets[int(ch)], NORMAL)
-    #print("\n{}\n{}\n".format(k_titles[int(ch)], k_magnets[int(ch)]))
+    print("\n", GREEN, k_magnets[int(ch)], NORMAL, "\n") #Print the magnet link
+    #Now we going to create a .torrent file to store the info
+
 
 
 
 
 if len(sys.argv) < 2:
     print(YELLOW, banner, NORMAL)
-    exit("Usage: python btsearch.py -s 'SEARCH' (make sure to use parenthesis)")
+    print("Usage: python {} -s 'SEARCH' (make sure to use parenthesis)".format(sys.argv[0]))
 if '--help' in sys.argv or '-h' in sys.argv:
     print(YELLOW, banner, NORMAL)
 
